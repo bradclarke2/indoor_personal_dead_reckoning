@@ -1,0 +1,1729 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>characterisation_of_data_3</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-04-13"><meta name="DC.source" content="characterisation_of_data_3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Clearing of previous data</a></li><li><a href="#2">Selection of .csv file and the useful data</a></li><li><a href="#3">Calibration of data</a></li><li><a href="#4">Sizing of Graphs</a></li><li><a href="#5">Calibrated accel and gyro graphs</a></li><li><a href="#6">Calculation producing the normalised accelerations</a></li><li><a href="#7">Frequency and time step calculations</a></li><li><a href="#8">Fast fourier transform</a></li><li><a href="#9">Filter</a></li><li><a href="#10">Checking of fliter effect</a></li><li><a href="#11">Calculating Jerk</a></li><li><a href="#12">Jerk Plots</a></li><li><a href="#13">Gyroscope Plots</a></li><li><a href="#14">Calculating anglular displacement</a></li><li><a href="#15">Plotting of angular displacement</a></li><li><a href="#16">bens moving average</a></li><li><a href="#17">Velocity of subject</a></li><li><a href="#18">X-Y co-ordinate plotting</a></li></ul></div><h2>Clearing of previous data<a name="1"></a></h2><pre class="codeinput">clear <span class="string">all</span>
+clc
+</pre><h2>Selection of .csv file and the useful data<a name="2"></a></h2><pre class="codeinput"><span class="comment">%files = dir('*.csv');</span>
+<span class="comment">%for file = files'</span>
+    [FileName,PathName] = uigetfile({<span class="string">'*'</span>},<span class="string">'Load Turn File'</span>);
+    <span class="comment">%get filename and use this to append to graphs and figures</span>
+    <span class="comment">%FileName = pwd;</span>
+    <span class="comment">%FileName = strcat(FileName,'\',file.name);</span>
+    [pathstr, name, ext] = fileparts(FileName); <span class="comment">% inputdlg('What is the name of this test?','Test Name Input');</span>
+    delimiter = <span class="string">','</span>;
+    FileName = fullfile(PathName,[name ext]);
+    <span class="comment">%Format string for each line of text:</span>
+    formatSpec = <span class="string">'%f%f%f%f%f%f%f%*s%*s%[^\n\r]'</span>;
+    <span class="comment">% Open the text file.</span>
+    fileID = fopen(FileName,<span class="string">'r'</span>);
+    <span class="comment">% Read columns of data according to format string.</span>
+    dataArray = textscan(fileID, formatSpec, <span class="string">'Delimiter'</span>, delimiter, <span class="string">'EmptyValue'</span> ,NaN, <span class="string">'ReturnOnError'</span>, false);
+    <span class="comment">% Close the text file.</span>
+    fclose(fileID);
+    <span class="comment">%remove unnecesary columns from raw CSV file</span>
+    raw_data = [dataArray{:, 2} dataArray{:, 3} dataArray{:, 4} dataArray{:, 5} dataArray{:, 6} dataArray{:, 7}];
+    <span class="comment">%Calibrate data using 04011 node calibration file</span>
+    calibrated_data = Calibrate04008(raw_data);
+</pre><h2>Calibration of data<a name="3"></a></h2><pre class="codeinput">    <span class="comment">%seperate accel and gyro</span>
+    raw_accel = [raw_data(:, 1) raw_data(:, 2) raw_data(:, 3)];
+    raw_gyro = [raw_data(:, 4) raw_data(:, 5) raw_data(:, 6)];
+    cal_accel = [calibrated_data(:, 1) calibrated_data(:, 2) calibrated_data(:, 3)];
+    cal_gyro = [calibrated_data(:, 4) calibrated_data(:, 5) calibrated_data(:, 6)];
+</pre><h2>Sizing of Graphs<a name="4"></a></h2><pre class="codeinput">    max_y_axis = 25;
+    max_x_axis = size(cal_accel,1);
+    max_gyro_axis = 3;
+</pre><h2>Calibrated accel and gyro graphs<a name="5"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated 3 axis acceleration'</span>));
+    plot(cal_accel);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'g'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-1.5,1.5]);
+    title (strcat(name,<span class="string">' - Calibrated 3 axis acceleration'</span>));
+    legend(<span class="string">'X Axis'</span>, <span class="string">'Y Axis'</span>, <span class="string">'Z Axis'</span>);
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated 3 axis gyro'</span>));
+    plot(cal_gyro);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated 3 axis gyro'</span>));
+    legend(<span class="string">'X Axis'</span>, <span class="string">'Y Axis'</span>, <span class="string">'Z Axis'</span>);
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_01.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_02.png" style="width:560px;height:420px;" alt=""> <h2>Calculation producing the normalised accelerations<a name="6"></a></h2><pre class="codeinput">    normx = (cal_accel(:,1)+1)*9.81;
+    normy =cal_accel(:,2)*9.81;
+    normz = cal_accel(:,3)*9.81;
+    gyrox = cal_gyro(:,1);
+    gyroy = cal_gyro(:,2);
+    gyroz = cal_gyro(:,3);
+</pre><h2>Frequency and time step calculations<a name="7"></a></h2><pre class="codeinput">    Fs = 50;
+    T = 1/Fs;
+</pre><h2>Fast fourier transform<a name="8"></a></h2><pre class="codeinput">    L = max_x_axis;
+    NFFT = 2^nextpow2(L); <span class="comment">% Next power of 2 from length of y</span>
+    Y = fft(normz,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+
+    figure;
+    <span class="comment">% Plot single-sided amplitude spectrum.</span>
+    plot(f,2*abs(Y(1:NFFT/2+1)))
+    title(<span class="string">'Single-Sided Amplitude Spectrum of y(t)'</span>)
+    xlabel(<span class="string">'Frequency (Hz)'</span>)
+    ylabel(<span class="string">'|Y(f)|'</span>)
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_03.png" style="width:560px;height:420px;" alt=""> <h2>Filter<a name="9"></a></h2><pre>   for n = 1:length(normx)
+       sample_num (n) = n;
+   end
+   sample_num = sample_num';</pre><pre>   fc = 5;
+   wn = (fc/Fs)*2*pi;
+   [sample_num,normx] = butter(20,wn);
+   filterx= normx;</pre><pre class="codeinput">    filterx = butterworthLowV1(normx, 1,50, 2.5);
+    filtery = butterworthLowV1(normy, 1,50, 2.5);
+    filterz = butterworthLowV1(normz, 1,50, 0.5);
+</pre><h2>Checking of fliter effect<a name="10"></a></h2><pre class="codeinput">    L = max_x_axis;
+    NFFT = 2^nextpow2(L); <span class="comment">% Next power of 2 from length of y</span>
+    Y = fft(filterz,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+
+    figure;
+    <span class="comment">% Plot single-sided amplitude spectrum.</span>
+    plot(f,2*abs(Y(1:NFFT/2+1)))
+    title(<span class="string">'Single-Sided Amplitude Spectrum of y(t)'</span>)
+    xlabel(<span class="string">'Frequency (Hz)'</span>)
+    ylabel(<span class="string">'|Y(f)|'</span>)
+
+    <span class="comment">%%Plotting of flitered data</span>
+
+        <span class="comment">%displacement = acc2disp(norm,0.02);</span>
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated and Filtered  X axis acceleration'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(filterx);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s2'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,<span class="string">' - Filtered, Calibrated &amp; Normalised X axis acceleration'</span>));
+
+    pks = findpeaks(filterx);
+    indices = find(abs(pks)&lt;0.5);
+    pks(indices) = [];
+    num_of_steps = length(pks)
+
+
+<span class="comment">%     figure('name',strcat(name,' - Calibrated &amp; Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);</span>
+<span class="comment">%     plot(normx);</span>
+<span class="comment">%     xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%     ylabel('m/s2'); % y-axis label</span>
+<span class="comment">%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);</span>
+<span class="comment">%     title (strcat(name,' - Calibrated &amp; Normalised X axis acceleration'));</span>
+<span class="comment">%</span>
+<span class="comment">%     norm_accel = [normx normy normz];</span>
+<span class="comment">%</span>
+<span class="comment">%     figure('name',strcat(name,' - Calibrated &amp; Normalised(X) 3 axis acceleration'));</span>
+<span class="comment">%     plot(norm_accel);</span>
+<span class="comment">%     xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%     ylabel('m/s2'); % y-axis label</span>
+<span class="comment">%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);</span>
+<span class="comment">%     title (strcat(name,' - Calibrated &amp; Normalised(X) 3 axis acceleration'));</span>
+<span class="comment">%     legend('X Axis', 'Y Axis', 'Z Axis');</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%     %%displacement = acc2disp(norm,0.02);</span>
+<span class="comment">%     figure('name',strcat(name,' - Calibrated &amp; Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);</span>
+<span class="comment">%     plot(normx);</span>
+<span class="comment">%     xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%     ylabel('m/s2'); % y-axis label</span>
+<span class="comment">%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);</span>
+<span class="comment">%     title (strcat(name,' - Calibrated &amp; Normalised X axis acceleration'));</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated and Filtered Y axis acceleration'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(filtery);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s2'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Y axis acceleration'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated and Filtered Z axis acceleration'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(filterz);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s2'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Z axis accelervation'</span>));
+</pre><pre class="codeoutput">
+num_of_steps =
+
+   263
+
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_04.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_05.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_06.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_07.png" style="width:1586px;height:810px;" alt=""> <h2>Calculating Jerk<a name="11"></a></h2><pre class="codeinput">    <span class="keyword">for</span> n = 1 : (length(normx)-1)
+       jerkx(n) = (filterx(n+1)-filterx(n))/T;
+       <span class="keyword">if</span> jerkx(n)&gt;17
+           step(n)= 1;
+       <span class="keyword">else</span>
+           step(n) = 0;
+       <span class="keyword">end</span>
+       jerky(n) = (filtery(n+1)-filtery(n))/T;
+       jerkz(n) = (filterz(n+1)-filterz(n))/T;
+    <span class="keyword">end</span>
+
+    jerkx = jerkx';
+    jerky = jerky';
+    jerkz = jerkz';
+</pre><h2>Jerk Plots<a name="12"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrate X axis Jerk'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(jerkx);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s3'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated X axis Jerk'</span>));
+
+      figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrate Y axis Jerk'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(jerky);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s3'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Y axis Jerk'</span>));
+
+      figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrate Z axis Jerk'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(jerkz);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s3'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Z axis Jerk'</span>));
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_08.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_09.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_10.png" style="width:1586px;height:810px;" alt=""> <h2>Gyroscope Plots<a name="13"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated X axis gyro'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(gyrox);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated X axis gyro'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Y axis gyro'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(gyroy);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Y axis gyro'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Z axis gyro'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(gyroz);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Z axis gyro'</span>));
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_11.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_12.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_13.png" style="width:1586px;height:810px;" alt=""> <h2>Calculating anglular displacement<a name="14"></a></h2><pre class="codeinput">    anglex = 0;
+    angley = 0;
+    anglez = 0;
+
+    <span class="keyword">for</span> n = 1: (length(gyrox)-1)
+       x_angle =((gyrox(n)+ gyrox(n+1))/2)*T;
+       anglex(n+1) = anglex(n) + x_angle;
+
+       y_angle =((gyroy(n)+ gyroy(n+1))/2)*T;
+       angley(n+1) = angley(n) + y_angle;
+
+       z_angle =((gyroz(n)+ gyroz(n+1))/2)*T;
+       anglez(n+1) = anglez(n) + z_angle;
+    <span class="keyword">end</span>
+
+    anglex = (anglex') * 180/pi;
+    angley = (angley') * 180/pi;
+    anglez = (anglez') * 180/pi;
+
+    y1 = ones(length(anglex),1);
+    y90 = y1*90;
+    y_neg_90 = y1*-90;
+    y180 = y1*180;
+    y_neg_180 = y1*-180;
+    y270 = y1*270;
+    y_neg_270 = y1*-270;
+    y_neg_360 = y1*-360;
+    y_neg_450 = y1*-450;
+    y_neg_540 = y1*-540;
+    y_neg_630 = y1*-630;
+    y_neg_720 = y1*-720;
+    y_neg_810 = y1*-810;
+    y_neg_900 = y1*-900;
+    y_neg_990 = y1*-990;
+</pre><h2>Plotting of angular displacement<a name="15"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated X axis angular dsiplacement'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(anglex);
+    hold <span class="string">on</span>
+    plot((filterx.*10 -1200))
+    plot((filterz.*10 -1400))
+    legend(<span class="string">'angular displacement'</span>, <span class="string">'X axis acceleration'</span>, <span class="string">'Z axis acceleration'</span>)
+<span class="comment">%     plot(y1,'k');</span>
+<span class="comment">%     plot(y90,'k');</span>
+<span class="comment">%     plot(y180,'k');</span>
+<span class="comment">% %     plot(y270,'k');</span>
+<span class="comment">%     plot(y_neg_90,'k');</span>
+<span class="comment">%     plot(y_neg_180,'k');</span>
+<span class="comment">%     plot(y_neg_270,'k');</span>
+<span class="comment">%     plot(y_neg_360,'k');</span>
+<span class="comment">%     plot(y_neg_450,'k');</span>
+<span class="comment">%     plot(y_neg_540,'k');</span>
+<span class="comment">%     plot(y_neg_630,'k');</span>
+<span class="comment">%     plot(y_neg_720,'k');</span>
+<span class="comment">%     plot(y_neg_810,'k');</span>
+<span class="comment">%     plot(y_neg_900,'k');</span>
+<span class="comment">%     plot(y_neg_990,'k');</span>
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Degrees'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated X axis angular displacement'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Y axis angular displacement'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(angley);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Degrees'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Y axis angular displacement'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Z axis angular displacement'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(anglez);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Degrees'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Z axis angular displacement'</span>));
+
+<span class="comment">%     %% velocity calculation</span>
+<span class="comment">%</span>
+<span class="comment">%     x_velo = 0;</span>
+<span class="comment">%     y_velo = 0;</span>
+<span class="comment">%     z_velo = 0;</span>
+<span class="comment">%</span>
+<span class="comment">%     for n = 2:(length(filterx)-1)</span>
+<span class="comment">%</span>
+<span class="comment">%         x_velo(n) = x_velo(n-1) + T*0.5*(filterx(n+1)+filterx(n));</span>
+<span class="comment">%         y_velo(n) = y_velo(n-1) + T*0.5*(filtery(n+1)+filtery(n));</span>
+<span class="comment">%         z_velo(n) = z_velo(n-1) + T*0.5*(filterz(n+1)+filterz(n));</span>
+<span class="comment">%</span>
+<span class="comment">%     end</span>
+<span class="comment">%</span>
+<span class="comment">%     %% Velocity plots</span>
+<span class="comment">%</span>
+<span class="comment">%    figure</span>
+<span class="comment">%    plot (z_velo)</span>
+<span class="comment">%</span>
+<span class="comment">%    %% Displacement Calculations</span>
+<span class="comment">%</span>
+<span class="comment">%    x_displacement = 0;</span>
+<span class="comment">%    y_displacement = 0;</span>
+<span class="comment">%    z_displacement = 0;</span>
+<span class="comment">%</span>
+<span class="comment">%    for n = 2: (length(x_velo) - 1)</span>
+<span class="comment">%</span>
+<span class="comment">%    x_displacement(n) = x_displacement(n-1) + T*0.5*(x_velo(n)+x_velo(n+1));</span>
+<span class="comment">%    y_displacement(n) = y_displacement(n-1) + T*0.5*(y_velo(n)+y_velo(n+1));</span>
+<span class="comment">%    z_displacement(n) = z_displacement(n-1) + T*0.5*(z_velo(n)+z_velo(n+1));</span>
+<span class="comment">%</span>
+<span class="comment">%    end</span>
+<span class="comment">%</span>
+<span class="comment">%    figure</span>
+<span class="comment">%    plot(y_displacement)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%     %% jkndflksd</span>
+<span class="comment">%</span>
+<span class="comment">% %</span>
+<span class="comment">% %     h = get(0,'children');</span>
+<span class="comment">% %     for i=1:length(h)</span>
+<span class="comment">% %       saveas(h(i), get(h(i),'Name'), 'png');</span>
+<span class="comment">% %     end</span>
+<span class="comment">%</span>
+<span class="comment">% %     close all</span>
+<span class="comment">% %end</span>
+<span class="comment">%</span>
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_14.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_15.png" style="width:1586px;height:810px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_16.png" style="width:1586px;height:810px;" alt=""> <h2>bens moving average<a name="16"></a></h2><pre class="codeinput">filename = <span class="string">'C:\Users\Bradley\Google Drive\University\TPD\Testing\Accelerometer testing\Path Plotting Matlab\Route B\test 8 appended.csv'</span>;
+data_raw = csvread(filename);
+data_calibrated = Calibrate04008(data_raw);
+sampling_rate = 0.02; <span class="comment">%50Hz</span>
+<span class="comment">%Angles</span>
+<span class="comment">%starting_theta = [0, -PI./2 ,0]</span>
+l = length(data_calibrated);
+Theta = zeros(l,3);
+Theta(1,1) = 0.034113388;
+Theta(1,2) = -1.34362605;
+Theta(1,3) = 0.007888563786;
+<span class="keyword">for</span> i= 2:l;
+    <span class="keyword">for</span> j= 1:3;
+        Theta(i,j) = Theta(i-1,j)+data_calibrated(i-1,j+3)*sampling_rate;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+
+<span class="comment">%TIME matrix</span>
+T = zeros(l,1);
+<span class="keyword">for</span> i = 1:l;
+    T(i) = (i-1)*sampling_rate;
+<span class="keyword">end</span>;
+<span class="comment">%figure;</span>
+<span class="comment">% plot(Theta);</span>
+XYZ_temp = zeros(3,1);
+XYZ = zeros(l,3);
+<span class="keyword">for</span> i=1:l;
+        xyz = (data_calibrated(i, 1:3)).';
+        X_rot = [1,0,0;0,cos(Theta(i,1)),-sin(Theta(i,1));0,sin(Theta(i,1)),cos(Theta(i,1))];
+        Y_rot = [cos(Theta(i,2)),0,sin(Theta(i,2));0,1,0;-sin(Theta(i,2)),0,cos(Theta(i,2))];
+        Z_rot = [cos(Theta(i,3)),-sin(Theta(i,3)),0;sin(Theta(i,3)),cos(Theta(i,3)),0;0,0,1];
+        XYZ_temp = Z_rot*Y_rot*X_rot*xyz;
+        XYZ(i,1) = XYZ_temp(1,1);
+        XYZ(i,2) = XYZ_temp(2,1);
+        XYZ(i,3) = XYZ_temp(3,1);
+<span class="keyword">end</span>
+
+
+Xacc = XYZ(:,1); <span class="comment">%transformed accelerations, in globl coordinates</span>
+Yacc = XYZ(:,2);
+Zacc = XYZ(:,3);
+
+
+<span class="comment">% figure</span>
+<span class="comment">% plot(Xacc,'r-')</span>
+<span class="comment">% figure</span>
+<span class="comment">% plot(Yacc,'g-')</span>
+<span class="comment">% figure</span>
+<span class="comment">% plot(Zacc,'b-')</span>
+
+Xfreq = fft(abs(Xacc));
+X2 = abs(Xfreq/l);
+X1 = X2(1:l/2+1);
+X1(2:end-1) = 2*X1(2:end-1);
+
+Yfreq = fft(abs(Yacc));
+Y2 = abs(Yfreq/l);
+Y1 = Y2(1:l/2+1);
+Y1(2:end-1) = 2*Y1(2:end-1);
+
+Zfreq = fft(abs(Zacc));
+Z2 = abs(Zfreq/l);
+Z1 = Z2(1:l/2+1);
+Z1(2:end-1) = 2*Z1(2:end-1);
+
+f = (0:(l/2))/(l*sampling_rate);
+<span class="comment">%  figure</span>
+<span class="comment">% plot(f,X1,'r-',f,Y1,'g-',f,Z1,'b-')</span>
+
+Xvel_start = 0;
+Xdist_start = 0;
+Xvel = zeros(l,1);
+Xdist = zeros(l,1);
+Xvel(1,1) = Xvel_start;
+Xdist(1,1) = Xdist_start;
+<span class="keyword">for</span> i=2:l;
+    Xvel(i,1) = Xvel(i-1,1)+sampling_rate*(Xacc(i,1)+Xacc(i-1))/2;
+    Xdist(i,1) = Xdist(i-1,1)+sampling_rate*(Xvel(i,1)+Xvel(i-1))/2;
+<span class="keyword">end</span>
+
+Yvel_start = 0;
+Ydist_start = 0;
+Yvel = zeros(l,1);
+Ydist = zeros(l,1);
+Yvel(1,1) = Yvel_start;
+Ydist(1,1) = Ydist_start;
+<span class="keyword">for</span> i=2:l;
+    Yvel(i,1) = Yvel(i-1,1)+sampling_rate*(Yacc(i,1)+Yacc(i-1))/2;
+    Ydist(i,1) = Ydist(i-1,1)+sampling_rate*(Yvel(i,1)+Yvel(i-1))/2;
+<span class="keyword">end</span>
+
+Zvel_start = 0;
+Zdist_start = 0;
+Zvel = zeros(l,1);
+Zdist = zeros(l,1);
+Zvel(1,1) = Zvel_start;
+Zdist(1,1) = Zdist_start;
+<span class="keyword">for</span> i=2:l;
+    Zvel(i,1) = Zvel(i-1,1)+sampling_rate*(Zacc(i,1)+1+Zacc(i-1)+1)/2;
+    Zdist(i,1) = Zdist(i-1,1)+sampling_rate*(Zvel(i,1)+Zvel(i-1))/2;
+<span class="keyword">end</span>
+
+<span class="comment">% figure</span>
+<span class="comment">% plot(T,Xdist,'r-')</span>
+<span class="comment">% figure</span>
+<span class="comment">% plot(T,Ydist,'g-')</span>
+<span class="comment">% figure</span>
+<span class="comment">% plot(T,Zdist,'b-')</span>
+avg_length1 = 40; <span class="comment">%samples must even, found best at 36</span>
+avg_Zgiro = zeros(l,10);
+avg_Zgiro(:,1) = T(:,1);
+<span class="keyword">for</span> i = (0.5*avg_length1+1):(l-0.5*avg_length1);
+    <span class="keyword">for</span> j = (i-0.5*avg_length1):(i+0.5*avg_length1);
+        avg_Zgiro(i,2) = avg_Zgiro(i,2) + (1/avg_length1)*Theta(j,1);
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+peak_length = 150;
+<span class="keyword">for</span> i = (0.5*peak_length+1):(l-0.5*peak_length);
+    avg_Zgiro(i,3)= -(avg_Zgiro((i-0.5*peak_length),2))+(avg_Zgiro((i+0.5*peak_length),2));
+<span class="keyword">end</span>;
+
+<span class="keyword">for</span> i = 1:l;
+    <span class="keyword">if</span> avg_Zgiro(i,3) &gt; 0.6 || avg_Zgiro(i,3) &lt; -0.6 ; <span class="comment">%</span>
+        avg_Zgiro(i,4) = avg_Zgiro(i,3);
+    <span class="keyword">else</span>;
+        avg_Zgiro(i,4) = 0;
+    <span class="keyword">end</span>;
+
+<span class="keyword">end</span>;
+
+peak_centre_avg_width = 30;
+x=0;
+<span class="keyword">for</span> i = (0.5*peak_centre_avg_width+1):(l-0.5*peak_centre_avg_width);
+    <span class="keyword">if</span> abs(avg_Zgiro(i,4)) &gt; 0;
+    <span class="keyword">for</span> j = (i-0.5*peak_centre_avg_width):(i+0.5*peak_centre_avg_width);
+        avg_Zgiro(i,5) = avg_Zgiro(i,5)+ (1/(peak_centre_avg_width+1))*avg_Zgiro(j,4);
+    <span class="keyword">end</span>;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+
+<span class="keyword">for</span> i = 1:l;
+    <span class="keyword">if</span> avg_Zgiro(i,5)&gt;0 &amp;&amp; avg_Zgiro(i,5)&lt;avg_Zgiro(i-1,5) &amp;&amp; avg_Zgiro(i-1,5)&gt;avg_Zgiro(i-2,5);
+        avg_Zgiro(i,6) = avg_Zgiro(i,4);
+    <span class="keyword">else</span> <span class="keyword">if</span> avg_Zgiro(i,5)&lt;0 &amp;&amp; avg_Zgiro(i,5)&gt;avg_Zgiro(i-1,5) &amp;&amp; avg_Zgiro(i-1,5)&lt;avg_Zgiro(i-2,5);
+            avg_Zgiro(i,6) = avg_Zgiro(i,4);
+        <span class="keyword">else</span>;
+            avg_Zgiro(i,6) = 0;
+        <span class="keyword">end</span>;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+a = 1;
+<span class="keyword">while</span> a&lt;=l;
+<span class="keyword">while</span> abs(avg_Zgiro(a,6))&gt;0;
+    c=a;
+        <span class="keyword">while</span> a&lt;=l &amp;&amp; abs(avg_Zgiro(a,5))&gt;0
+            <span class="keyword">if</span> abs(avg_Zgiro(a,6))&gt;0;
+            avg_Zgiro(a,7) = avg_Zgiro(a,6);
+            <span class="keyword">else</span>;
+            avg_Zgiro(a,7) = 0;
+            <span class="keyword">end</span>;
+            a=a+1;
+        <span class="keyword">end</span>;
+        d  = max(abs(avg_Zgiro(:,7)));
+        <span class="keyword">for</span> b = c:a;
+            <span class="keyword">if</span> abs(avg_Zgiro(b,7))==d;
+                avg_Zgiro(b,8)=avg_Zgiro(b,7);
+            <span class="keyword">else</span>;
+                avg_Zgiro(b,8)=0;
+            <span class="keyword">end</span>;
+            <span class="keyword">end</span>;
+            avg_Zgiro(:,7)=0;
+<span class="keyword">end</span>;
+a=a+1;
+<span class="keyword">end</span>;
+
+<span class="comment">% f = 1</span>
+<span class="comment">% while f &lt; l;</span>
+<span class="comment">%     while abs(avg_Zgiro(f,6))&gt;0;</span>
+<span class="comment">%         if abs(avg_Zgiro(f,6))&gt;abs(avg_Zgiro((f-1),6));</span>
+<span class="comment">%             avg_Zgiro(f,6) = avg_Zgiro(f,6);</span>
+<span class="comment">%         else;</span>
+<span class="comment">%             avg_Zgiro(f,6) = 0;</span>
+<span class="comment">%         end;</span>
+<span class="comment">%         f = f+1;</span>
+<span class="comment">%     end;</span>
+<span class="comment">%     f=f+1;</span>
+<span class="comment">% end;</span>
+
+<span class="keyword">for</span> i = 1:l;
+    h = avg_Zgiro(i,8);
+    <span class="keyword">if</span> h&gt;0.6 &amp;&amp; h&lt;1;
+        avg_Zgiro(i,9) = 0.7854;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&lt;-0.6 &amp;&amp; h&gt;-1;
+            avg_Zgiro(i,9) = -0.7854;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&gt;=1 &amp;&amp; h&lt;2.5;
+        avg_Zgiro(i,9) = 1.5708;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&lt;=-1 &amp;&amp; h&gt;-2.5 ;
+        avg_Zgiro(i,9) = -1.5708;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&gt;=2.5 &amp;&amp; h&lt;4;
+        avg_Zgiro(i,9) = 3.1416;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&lt;=-2.5 &amp;&amp; h&gt;-4;
+        avg_Zgiro(i,9) = -3.1416;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&gt;=4 &amp;&amp; h&lt;5.5;
+        avg_Zgiro(i,9) = 4.7124;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&lt;=-4 &amp;&amp; h&gt;-5.5;
+        avg_Zgiro(i,9) = -4.7124;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&gt;=5.5 &amp;&amp; h&lt;7;
+        avg_Zgiro(i,9) = 6.2832;
+    <span class="keyword">else</span> <span class="keyword">if</span> h&lt;=-5.5 &amp;&amp;h&gt;-7;
+        avg_Zgiro(i,9) = -6.2832;
+        <span class="keyword">else</span>;
+            avg_Zgiro(i,9)=0;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+<span class="keyword">for</span> i = 2:l;
+    avg_Zgiro(i,10)= avg_Zgiro(i-1,10)+avg_Zgiro(i,9);
+<span class="keyword">end</span>;
+
+
+e=1;
+<span class="keyword">for</span> i = 1:l;
+    <span class="keyword">if</span> abs(avg_Zgiro(i,9))&gt;0;
+        e = e+1;
+    <span class="keyword">else</span>;
+        e=e;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+
+dir_vec = zeros(e,1);
+f = 1;
+<span class="keyword">for</span> i = 1:l;
+    <span class="keyword">if</span> abs(avg_Zgiro(i,9))&gt;0;
+        dir_vec(f,1) = avg_Zgiro(i,9);
+        f=f+1;
+    <span class="keyword">else</span>;
+        f=f;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+dir_vec
+
+aMech_DSuite_stairs = [1.5708;1.5708;-0.7854;0.7854;3.1416;-1.5708;1.5708;1.5708;3.1416;3.1416;1.5708;1.5708;-1.5708;0;0;0;0;0;0;0];
+bDSuite_Mech_stairs = [1.5708;-1.5708;-1.5708;-3.1416;-3.1416;-1.5708;-1.5708;1.5708;-3.1416;-0.7854;0.7854;-1.5708;-1.5708;0;0;0;0;0;0;0];
+cMech_DSuite_nostairs = [-1.5708;-0.7854;0.7854;-1.5708;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0];
+dDSuite_Mech_nostairs = [1.5708;0.7854;-0.7854;1.5708;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0];
+
+ma = zeros(length(aMech_DSuite_stairs),1);
+na = zeros((length(aMech_DSuite_stairs)-length(dir_vec)+1),1);
+<span class="keyword">for</span> i = 1:(length(aMech_DSuite_stairs)-length(dir_vec)+1);
+    <span class="keyword">for</span> j = 1:length(dir_vec);
+        <span class="keyword">if</span> dir_vec(j) == aMech_DSuite_stairs(j+i-1);
+            ma(j) = 1;
+        <span class="keyword">else</span>;
+            ma(j) = 0;
+        <span class="keyword">end</span>;
+        na(i) = mean(ma);
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+na        ;
+
+mb = zeros(length(bDSuite_Mech_stairs),1);
+nb = zeros((length(bDSuite_Mech_stairs)-length(dir_vec)+1),1);
+<span class="keyword">for</span> i = 1:(length(bDSuite_Mech_stairs)-length(dir_vec)+1);
+    <span class="keyword">for</span> j = 1:length(dir_vec);
+        <span class="keyword">if</span> dir_vec(j) == bDSuite_Mech_stairs(j+i-1);
+            mb(j) = 1;
+        <span class="keyword">else</span>;
+            mb(j) = 0;
+        <span class="keyword">end</span>;
+        nb(i) = mean(mb);
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+nb            ;
+
+mc = zeros(length(cMech_DSuite_nostairs),1);
+nc = zeros((length(cMech_DSuite_nostairs)-length(dir_vec)+1),1);
+<span class="keyword">for</span> i = 1:(length(cMech_DSuite_nostairs)-length(dir_vec)+1);
+    <span class="keyword">for</span> j = 1:length(dir_vec);
+        <span class="keyword">if</span> dir_vec(j) == cMech_DSuite_nostairs(j+i-1);
+            mc(j) = 1;
+        <span class="keyword">else</span>;
+            mc(j) = 0;
+        <span class="keyword">end</span>;
+        nc(i) = mean(mc);
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+nc      ;
+
+md = zeros(length(dDSuite_Mech_nostairs),1);
+nd = zeros((length(dDSuite_Mech_nostairs)-length(dir_vec)+1),1);
+<span class="keyword">for</span> i = 1:(length(dDSuite_Mech_nostairs)-length(dir_vec)+1);
+    <span class="keyword">for</span> j = 1:length(dir_vec);
+        <span class="keyword">if</span> dir_vec(j) == dDSuite_Mech_nostairs(j+i-1);
+            md(j) = 1;
+        <span class="keyword">else</span>
+            md(j) = 0;
+        <span class="keyword">end</span>;
+        nd(i) = mean(md);
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+nd   ;
+
+Route_factor = [max(na);max(nb);max(nc);max(nd)]
+
+figure
+plot(avg_Zgiro(:,1),avg_Zgiro(:,2),<span class="string">'r-'</span>, T,Theta(:,1),<span class="string">'g-'</span>,avg_Zgiro(:,1),avg_Zgiro(:,3),<span class="string">'b-'</span>,avg_Zgiro(:,1),avg_Zgiro(:,4),<span class="string">'cy-'</span>,avg_Zgiro(:,1),avg_Zgiro(:,8),<span class="string">'k-'</span>,avg_Zgiro(:,1),avg_Zgiro(:,6),<span class="string">'m-'</span>)
+figure
+plot(T,Theta(:,1),<span class="string">'r-'</span>,avg_Zgiro(:,1),avg_Zgiro(:,10),<span class="string">'k-'</span>)<span class="comment">%,avg_Zgiro(:,1),avg_Zgiro(:,8),'m-',avg_Zgiro(:,1),avg_Zgiro(:,9),'cy-',</span>
+</pre><pre class="codeoutput">
+dir_vec =
+
+    1.5708
+   -1.5708
+   -1.5708
+   -3.1416
+   -3.1416
+   -1.5708
+   -1.5708
+    1.5708
+   -3.1416
+   -0.7854
+    0.7854
+   -1.5708
+   -1.5708
+   -1.5708
+         0
+
+
+Route_factor =
+
+    0.2500
+    0.7000
+    0.1000
+    0.1000
+
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_17.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_18.png" style="width:560px;height:420px;" alt=""> <h2>Velocity of subject<a name="17"></a></h2><pre class="codeinput"><span class="comment">% for n = 1: length(filterz)</span>
+<span class="comment">%    sample = filterz(n):filterz(n+10)</span>
+<span class="comment">%</span>
+<span class="comment">% end</span>
+</pre><h2>X-Y co-ordinate plotting<a name="18"></a></h2><pre class="codeinput">    Fs = 50;
+    T = 1/Fs;
+
+
+    pks_jerk = findpeaks(jerkx);
+    indices = find(abs(pks_jerk)&gt;5);
+    A = pks_jerk(indices); <span class="comment">%= []</span>
+    num_of_steps_jerk = length(A)
+    figure
+    plot(A)
+    title(<span class="string">'Absolute Jerk peaks'</span>)
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>);
+    ylabel(<span class="string">'m^3 /s'</span>)
+
+
+<span class="comment">%      semi_gaussian = [15 25 35 75];</span>
+<span class="comment">%      semi_gaussian = [semi_gaussian fliplr(semi_gaussian)];</span>
+<span class="comment">%      weighted = tsmovavg(A, 'w', semi_gaussian,1);</span>
+<span class="comment">%      figure</span>
+<span class="comment">%      plot(weighted)</span>
+
+     x_distance = 0;
+     y_distance = 0;
+     z_distance = 0;
+<span class="comment">%      time_step_characterised = (T * length(jerkx)) / length (weighted);</span>
+<span class="comment">%      axis_spacing = linspace(0,T * length(jerkx), length(weighted));</span>
+     theta = avg_Zgiro(:,10);
+     Velocity = 0.71; <span class="comment">%avereage velocity whilst walking in a straight line</span>
+     Velocity_stairs = 0.15; <span class="comment">% average x velocity whilst travelling up stairs</span>
+
+   <span class="keyword">for</span> n = 1 : length(jerkx)
+
+    <span class="keyword">if</span>  jerkx(n) &gt; 20 &amp;&amp; jerkx(n) &lt; 30
+
+        B(n) = 25;
+        x_velocity = Velocity * cos(theta(n)) ; <span class="comment">%veloctiy of person in x m/s</span>
+        y_velocity = Velocity * sin (theta(n));
+        z_distance_snapshot = 0;
+
+    <span class="keyword">elseif</span> jerkx(n) &gt; 30 &amp;&amp; jerkx(n)&lt;40
+
+        B(n) = 35;
+        x_velocity = Velocity_stairs * cos(theta(n));
+        y_velocity = Velocity_stairs * sin (theta(n));
+        <span class="keyword">if</span> filterz(n) &gt; 2.3
+            z_distance_snapshot = 0.2;
+        <span class="keyword">else</span>
+            z_distance_snapshot = 0;
+        <span class="keyword">end</span>
+
+    <span class="keyword">elseif</span> jerkx(n)&gt; 50
+
+       B(n) = 75;
+       x_velocity = Velocity_stairs * cos(theta(n));
+       y_velocity = Velocity_stairs * sin (theta(n));
+       z_distance_snapshot = -0.08;
+
+    <span class="keyword">elseif</span> jerkx(n) &lt; -20 &amp;&amp; jerkx(n) &gt; -30
+        B(n) = 25;
+        x_velocity = Velocity * cos(theta(n)) ; <span class="comment">%veloctiy of person in x m/s</span>
+        y_velocity = Velocity * sin (theta(n));
+        z_distance_snapshot = 0;
+
+    <span class="keyword">elseif</span> jerkx(n) &lt; -30 &amp;&amp; jerkx(n) &gt;-40
+        B(n) = 35;
+        x_velocity = Velocity_stairs * cos(theta(n));
+        y_velocity = Velocity_stairs * sin (theta(n));
+        z_distance_snapshot = 0;
+
+    <span class="keyword">elseif</span> jerkx(n) &lt; -50
+       B(n) = 75;
+       x_velocity = Velocity_stairs * cos(theta(n));
+       y_velocity = Velocity_stairs * sin (theta(n));
+       z_distance_snapshot = -0.08;
+    <span class="keyword">else</span>
+        B(n) = 25;
+        x_velocity = Velocity * cos(theta(n)) ; <span class="comment">%veloctiy of person in x m/s</span>
+        y_velocity = Velocity * sin (theta(n));
+        z_distance_snapshot = 0;
+
+    <span class="keyword">end</span>
+
+    x_distance(n+1) = x_distance(n) + x_velocity * T;
+    y_distance(n+1) = y_distance(n) + y_velocity * T;
+    z_distance(n+1) = z_distance(n) + z_distance_snapshot;
+   <span class="keyword">end</span>
+
+   figure
+   plot(B)
+   title(<span class="string">'Characterising of jerk data'</span>)
+   xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>);
+   ylabel(<span class="string">'m^3 /s'</span>)
+   hold <span class="string">on</span>
+   plot (abs(jerkx))
+   hold <span class="string">off</span>
+
+<span class="comment">%    figure</span>
+<span class="comment">%     hold on</span>
+<span class="comment">%     for n = 1: length(x_distance)</span>
+<span class="comment">%</span>
+<span class="comment">%         x_displacement_movie(n) = x_distance(n);</span>
+<span class="comment">%         y_displacement_movie(n) = y_distance(n);</span>
+<span class="comment">%         plot(x_displacement_movie, y_displacement_movie);</span>
+<span class="comment">% %         drawnow</span>
+<span class="comment">%         F(n) = getframe;</span>
+<span class="comment">%</span>
+<span class="comment">%     end</span>
+<span class="comment">%     movie(F,1)</span>
+<span class="comment">%     hold off</span>
+
+   figure
+   plot((x_distance .*-1), y_distance)
+
+   figure (<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1])
+   plot3((x_distance .*-1), y_distance, z_distance)
+   xlabel(<span class="string">'x distance / m'</span>)
+   ylabel(<span class="string">'y distance / m'</span>)
+   zlabel(<span class="string">'z distance / m'</span>)
+<span class="comment">%</span>
+<span class="comment">%     figure ('name',strcat(name,' - 3D Path Plot'),'units','normalized','outerposition',[0 0 1 1])</span>
+<span class="comment">%     v = VideoWriter('C:\Users\Bradley\Documents\UNIVERSITY\Part D\Total Product Design\peaks2.mp4','MPEG-4');</span>
+<span class="comment">%     v.FrameRate = 60;</span>
+<span class="comment">%     open(v);</span>
+<span class="comment">%     for n = 1: length(x_distance)</span>
+<span class="comment">%</span>
+<span class="comment">%         x_displacement_movie(n) = x_distance(n)*-1;</span>
+<span class="comment">%         y_displacement_movie(n) = y_distance(n);</span>
+<span class="comment">%         z_displacement_movie(n) = z_distance(n);</span>
+<span class="comment">%         x = plot3(x_displacement_movie, y_displacement_movie,z_displacement_movie);</span>
+<span class="comment">%         axis([-10 10 0 60 -5 25])</span>
+<span class="comment">%         xlabel('x distance / m')</span>
+<span class="comment">%         ylabel('y distance / m')</span>
+<span class="comment">%         zlabel('z distance / m')</span>
+<span class="comment">%         %drawnow</span>
+<span class="comment">%         img = getframe(gcf);</span>
+<span class="comment">%         writeVideo(v,img);</span>
+<span class="comment">%</span>
+<span class="comment">%     end</span>
+<span class="comment">%</span>
+<span class="comment">%     close(v)</span>
+
+
+
+
+<span class="comment">%    figure</span>
+<span class="comment">%    plot(axis_spacing, y_distance(2:length(x_distance)))</span>
+</pre><pre class="codeoutput">
+num_of_steps_jerk =
+
+   276
+
+</pre><img vspace="5" hspace="5" src="characterisation_of_data_3_19.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_20.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_21.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="characterisation_of_data_3_22.png" style="width:1586px;height:810px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Clearing of previous data
+
+clear all
+clc
+
+%% Selection of .csv file and the useful data
+ 
+%files = dir('*.csv');
+%for file = files'
+    [FileName,PathName] = uigetfile({'*'},'Load Turn File');
+    %get filename and use this to append to graphs and figures
+    %FileName = pwd;
+    %FileName = strcat(FileName,'\',file.name);
+    [pathstr, name, ext] = fileparts(FileName); % inputdlg('What is the name of this test?','Test Name Input');
+    delimiter = ',';
+    FileName = fullfile(PathName,[name ext]);
+    %Format string for each line of text:
+    formatSpec = '%f%f%f%f%f%f%f%*s%*s%[^\n\r]';
+    % Open the text file.
+    fileID = fopen(FileName,'r');
+    % Read columns of data according to format string.
+    dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'EmptyValue' ,NaN, 'ReturnOnError', false);
+    % Close the text file.
+    fclose(fileID);
+    %remove unnecesary columns from raw CSV file
+    raw_data = [dataArray{:, 2} dataArray{:, 3} dataArray{:, 4} dataArray{:, 5} dataArray{:, 6} dataArray{:, 7}];
+    %Calibrate data using 04011 node calibration file
+    calibrated_data = Calibrate04008(raw_data);
+    
+%% Calibration of data
+
+    %seperate accel and gyro
+    raw_accel = [raw_data(:, 1) raw_data(:, 2) raw_data(:, 3)];
+    raw_gyro = [raw_data(:, 4) raw_data(:, 5) raw_data(:, 6)];
+    cal_accel = [calibrated_data(:, 1) calibrated_data(:, 2) calibrated_data(:, 3)];
+    cal_gyro = [calibrated_data(:, 4) calibrated_data(:, 5) calibrated_data(:, 6)];
+
+%% Sizing of Graphs       
+    max_y_axis = 25;
+    max_x_axis = size(cal_accel,1);
+    max_gyro_axis = 3;
+    
+
+%%  Calibrated accel and gyro graphs
+
+    figure('name',strcat(name,' - Calibrated 3 axis acceleration'));
+    plot(cal_accel);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('g'); % y-axis label
+    axis([0 ,max_x_axis,-1.5,1.5]);
+    title (strcat(name,' - Calibrated 3 axis acceleration'));
+    legend('X Axis', 'Y Axis', 'Z Axis');
+
+    figure('name',strcat(name,' - Calibrated 3 axis gyro'));
+    plot(cal_gyro);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated 3 axis gyro'));
+    legend('X Axis', 'Y Axis', 'Z Axis');
+
+    %% Calculation producing the normalised accelerations
+
+    normx = (cal_accel(:,1)+1)*9.81;
+    normy =cal_accel(:,2)*9.81;
+    normz = cal_accel(:,3)*9.81;
+    gyrox = cal_gyro(:,1);
+    gyroy = cal_gyro(:,2);
+    gyroz = cal_gyro(:,3);
+    
+    %% Frequency and time step calculations
+
+    Fs = 50;
+    T = 1/Fs;
+    
+    %% Fast fourier transform
+    L = max_x_axis;
+    NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+    Y = fft(normz,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+      
+    figure;
+    % Plot single-sided amplitude spectrum.
+    plot(f,2*abs(Y(1:NFFT/2+1))) 
+    title('Single-Sided Amplitude Spectrum of y(t)')
+    xlabel('Frequency (Hz)')
+    ylabel('|Y(f)|')
+    
+    %% Filter
+%     for n = 1:length(normx)
+%         sample_num (n) = n;
+%     end
+%     sample_num = sample_num';
+%     
+%     fc = 5;
+%     wn = (fc/Fs)*2*pi;
+%     [sample_num,normx] = butter(20,wn);
+%     filterx= normx;
+    filterx = butterworthLowV1(normx, 1,50, 2.5);
+    filtery = butterworthLowV1(normy, 1,50, 2.5);
+    filterz = butterworthLowV1(normz, 1,50, 0.5);
+       
+    %% Checking of fliter effect
+    
+    L = max_x_axis;
+    NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+    Y = fft(filterz,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+    
+    figure;
+    % Plot single-sided amplitude spectrum.
+    plot(f,2*abs(Y(1:NFFT/2+1))) 
+    title('Single-Sided Amplitude Spectrum of y(t)')
+    xlabel('Frequency (Hz)')
+    ylabel('|Y(f)|')
+    
+    %%Plotting of flitered data
+    
+        %displacement = acc2disp(norm,0.02);
+    figure('name',strcat(name,' - Calibrated and Filtered  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(filterx);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s2'); % y-axis label
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,' - Filtered, Calibrated & Normalised X axis acceleration'));
+    
+    pks = findpeaks(filterx);
+    indices = find(abs(pks)<0.5);
+    pks(indices) = [];
+    num_of_steps = length(pks)
+    
+    
+%     figure('name',strcat(name,' - Calibrated & Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+%     plot(normx);
+%     xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%     ylabel('m/s2'); % y-axis label
+%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+%     title (strcat(name,' - Calibrated & Normalised X axis acceleration'));
+% 
+%     norm_accel = [normx normy normz];
+% 
+%     figure('name',strcat(name,' - Calibrated & Normalised(X) 3 axis acceleration'));
+%     plot(norm_accel);
+%     xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%     ylabel('m/s2'); % y-axis label
+%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+%     title (strcat(name,' - Calibrated & Normalised(X) 3 axis acceleration'));
+%     legend('X Axis', 'Y Axis', 'Z Axis');
+% 
+%     
+%     %%displacement = acc2disp(norm,0.02);
+%     figure('name',strcat(name,' - Calibrated & Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+%     plot(normx);
+%     xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%     ylabel('m/s2'); % y-axis label
+%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+%     title (strcat(name,' - Calibrated & Normalised X axis acceleration'));
+% 
+% 
+    figure('name',strcat(name,' - Calibrated and Filtered Y axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(filtery);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s2'); % y-axis label
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,' - Calibrated Y axis acceleration'));
+
+    figure('name',strcat(name,' - Calibrated and Filtered Z axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(filterz);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s2'); % y-axis label
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,' - Calibrated Z axis accelervation'));
+    
+     
+    
+    
+    %% Calculating Jerk
+    
+    for n = 1 : (length(normx)-1)
+       jerkx(n) = (filterx(n+1)-filterx(n))/T;
+       if jerkx(n)>17
+           step(n)= 1;
+       else 
+           step(n) = 0;
+       end           
+       jerky(n) = (filtery(n+1)-filtery(n))/T;
+       jerkz(n) = (filterz(n+1)-filterz(n))/T;
+    end
+    
+    jerkx = jerkx';
+    jerky = jerky';
+    jerkz = jerkz';
+    
+    
+   
+    
+    %% Jerk Plots
+    
+    figure('name',strcat(name,' - Calibrate X axis Jerk'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(jerkx);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s3'); % y-axis label    
+    title (strcat(name,' - Calibrated X axis Jerk')); 
+    
+      figure('name',strcat(name,' - Calibrate Y axis Jerk'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(jerky);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s3'); % y-axis label    
+    title (strcat(name,' - Calibrated Y axis Jerk')); 
+    
+      figure('name',strcat(name,' - Calibrate Z axis Jerk'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(jerkz);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s3'); % y-axis label    
+    title (strcat(name,' - Calibrated Z axis Jerk')); 
+    
+    
+%% Gyroscope Plots
+
+    figure('name',strcat(name,' - Calibrated X axis gyro'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(gyrox);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated X axis gyro'));
+
+    figure('name',strcat(name,' - Calibrated Y axis gyro'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(gyroy);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated Y axis gyro'));
+
+    figure('name',strcat(name,' - Calibrated Z axis gyro'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(gyroz);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated Z axis gyro'));
+    
+    %% Calculating anglular displacement
+    anglex = 0;
+    angley = 0;
+    anglez = 0;
+    
+    for n = 1: (length(gyrox)-1)
+       x_angle =((gyrox(n)+ gyrox(n+1))/2)*T;
+       anglex(n+1) = anglex(n) + x_angle; 
+       
+       y_angle =((gyroy(n)+ gyroy(n+1))/2)*T;
+       angley(n+1) = angley(n) + y_angle; 
+       
+       z_angle =((gyroz(n)+ gyroz(n+1))/2)*T;
+       anglez(n+1) = anglez(n) + z_angle; 
+    end
+ 
+    anglex = (anglex') * 180/pi;
+    angley = (angley') * 180/pi;
+    anglez = (anglez') * 180/pi;
+    
+    y1 = ones(length(anglex),1);
+    y90 = y1*90;
+    y_neg_90 = y1*-90;
+    y180 = y1*180;
+    y_neg_180 = y1*-180;
+    y270 = y1*270;
+    y_neg_270 = y1*-270;
+    y_neg_360 = y1*-360;
+    y_neg_450 = y1*-450;
+    y_neg_540 = y1*-540;
+    y_neg_630 = y1*-630;
+    y_neg_720 = y1*-720;
+    y_neg_810 = y1*-810;
+    y_neg_900 = y1*-900;
+    y_neg_990 = y1*-990;
+
+    %% Plotting of angular displacement
+
+    figure('name',strcat(name,' - Calibrated X axis angular dsiplacement'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(anglex);
+    hold on
+    plot((filterx.*10 -1200))
+    plot((filterz.*10 -1400))
+    legend('angular displacement', 'X axis acceleration', 'Z axis acceleration')
+%     plot(y1,'k');
+%     plot(y90,'k');
+%     plot(y180,'k');
+% %     plot(y270,'k');
+%     plot(y_neg_90,'k');
+%     plot(y_neg_180,'k');
+%     plot(y_neg_270,'k');
+%     plot(y_neg_360,'k');
+%     plot(y_neg_450,'k');
+%     plot(y_neg_540,'k');
+%     plot(y_neg_630,'k');
+%     plot(y_neg_720,'k');
+%     plot(y_neg_810,'k');
+%     plot(y_neg_900,'k');
+%     plot(y_neg_990,'k');
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Degrees'); % y-axis label
+    title (strcat(name,' - Calibrated X axis angular displacement'));
+    
+    figure('name',strcat(name,' - Calibrated Y axis angular displacement'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(angley);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Degrees'); % y-axis label
+    title (strcat(name,' - Calibrated Y axis angular displacement'));
+    
+    figure('name',strcat(name,' - Calibrated Z axis angular displacement'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(anglez);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Degrees'); % y-axis label
+    title (strcat(name,' - Calibrated Z axis angular displacement'));
+    
+%     %% velocity calculation
+%     
+%     x_velo = 0;
+%     y_velo = 0;
+%     z_velo = 0;
+%     
+%     for n = 2:(length(filterx)-1)
+%         
+%         x_velo(n) = x_velo(n-1) + T*0.5*(filterx(n+1)+filterx(n)); 
+%         y_velo(n) = y_velo(n-1) + T*0.5*(filtery(n+1)+filtery(n));
+%         z_velo(n) = z_velo(n-1) + T*0.5*(filterz(n+1)+filterz(n));
+%         
+%     end
+%     
+%     %% Velocity plots
+%     
+%    figure
+%    plot (z_velo)
+%    
+%    %% Displacement Calculations
+%    
+%    x_displacement = 0;
+%    y_displacement = 0;
+%    z_displacement = 0;
+%    
+%    for n = 2: (length(x_velo) - 1)
+%    
+%    x_displacement(n) = x_displacement(n-1) + T*0.5*(x_velo(n)+x_velo(n+1));
+%    y_displacement(n) = y_displacement(n-1) + T*0.5*(y_velo(n)+y_velo(n+1));
+%    z_displacement(n) = z_displacement(n-1) + T*0.5*(z_velo(n)+z_velo(n+1));
+%      
+%    end
+%    
+%    figure
+%    plot(y_displacement)
+%   
+%    
+%     %% jkndflksd
+%     
+% % 
+% %     h = get(0,'children');
+% %     for i=1:length(h)
+% %       saveas(h(i), get(h(i),'Name'), 'png');
+% %     end
+% 
+% %     close all
+% %end
+% 
+%% bens moving average
+
+filename = 'C:\Users\Bradley\Google Drive\University\TPD\Testing\Accelerometer testing\Path Plotting Matlab\Route B\test 8 appended.csv';
+data_raw = csvread(filename);
+data_calibrated = Calibrate04008(data_raw);
+sampling_rate = 0.02; %50Hz
+%Angles
+%starting_theta = [0, -PI./2 ,0]
+l = length(data_calibrated);
+Theta = zeros(l,3);
+Theta(1,1) = 0.034113388;
+Theta(1,2) = -1.34362605;
+Theta(1,3) = 0.007888563786;
+for i= 2:l;
+    for j= 1:3;
+        Theta(i,j) = Theta(i-1,j)+data_calibrated(i-1,j+3)*sampling_rate;
+    end;
+end;
+
+%TIME matrix
+T = zeros(l,1);
+for i = 1:l;
+    T(i) = (i-1)*sampling_rate;
+end;
+%figure;
+% plot(Theta);
+XYZ_temp = zeros(3,1);
+XYZ = zeros(l,3);
+for i=1:l;
+        xyz = (data_calibrated(i, 1:3)).';
+        X_rot = [1,0,0;0,cos(Theta(i,1)),-sin(Theta(i,1));0,sin(Theta(i,1)),cos(Theta(i,1))];
+        Y_rot = [cos(Theta(i,2)),0,sin(Theta(i,2));0,1,0;-sin(Theta(i,2)),0,cos(Theta(i,2))];
+        Z_rot = [cos(Theta(i,3)),-sin(Theta(i,3)),0;sin(Theta(i,3)),cos(Theta(i,3)),0;0,0,1];
+        XYZ_temp = Z_rot*Y_rot*X_rot*xyz;
+        XYZ(i,1) = XYZ_temp(1,1);
+        XYZ(i,2) = XYZ_temp(2,1);
+        XYZ(i,3) = XYZ_temp(3,1);
+end
+
+
+Xacc = XYZ(:,1); %transformed accelerations, in globl coordinates
+Yacc = XYZ(:,2);
+Zacc = XYZ(:,3);
+
+
+% figure
+% plot(Xacc,'r-')
+% figure
+% plot(Yacc,'g-')
+% figure
+% plot(Zacc,'b-')
+
+Xfreq = fft(abs(Xacc));
+X2 = abs(Xfreq/l);
+X1 = X2(1:l/2+1);
+X1(2:end-1) = 2*X1(2:end-1);
+
+Yfreq = fft(abs(Yacc));
+Y2 = abs(Yfreq/l);
+Y1 = Y2(1:l/2+1);
+Y1(2:end-1) = 2*Y1(2:end-1);
+
+Zfreq = fft(abs(Zacc));
+Z2 = abs(Zfreq/l);
+Z1 = Z2(1:l/2+1);
+Z1(2:end-1) = 2*Z1(2:end-1);
+
+f = (0:(l/2))/(l*sampling_rate);
+%  figure
+% plot(f,X1,'r-',f,Y1,'g-',f,Z1,'b-')
+
+Xvel_start = 0;
+Xdist_start = 0;
+Xvel = zeros(l,1);
+Xdist = zeros(l,1);
+Xvel(1,1) = Xvel_start;
+Xdist(1,1) = Xdist_start;
+for i=2:l;
+    Xvel(i,1) = Xvel(i-1,1)+sampling_rate*(Xacc(i,1)+Xacc(i-1))/2;
+    Xdist(i,1) = Xdist(i-1,1)+sampling_rate*(Xvel(i,1)+Xvel(i-1))/2;
+end
+
+Yvel_start = 0;
+Ydist_start = 0;
+Yvel = zeros(l,1);
+Ydist = zeros(l,1);
+Yvel(1,1) = Yvel_start;
+Ydist(1,1) = Ydist_start;
+for i=2:l;
+    Yvel(i,1) = Yvel(i-1,1)+sampling_rate*(Yacc(i,1)+Yacc(i-1))/2;
+    Ydist(i,1) = Ydist(i-1,1)+sampling_rate*(Yvel(i,1)+Yvel(i-1))/2;
+end
+
+Zvel_start = 0;
+Zdist_start = 0;
+Zvel = zeros(l,1);
+Zdist = zeros(l,1);
+Zvel(1,1) = Zvel_start;
+Zdist(1,1) = Zdist_start;
+for i=2:l;
+    Zvel(i,1) = Zvel(i-1,1)+sampling_rate*(Zacc(i,1)+1+Zacc(i-1)+1)/2;
+    Zdist(i,1) = Zdist(i-1,1)+sampling_rate*(Zvel(i,1)+Zvel(i-1))/2;
+end
+
+% figure
+% plot(T,Xdist,'r-')
+% figure
+% plot(T,Ydist,'g-')
+% figure
+% plot(T,Zdist,'b-')
+avg_length1 = 40; %samples must even, found best at 36
+avg_Zgiro = zeros(l,10);
+avg_Zgiro(:,1) = T(:,1);
+for i = (0.5*avg_length1+1):(l-0.5*avg_length1);
+    for j = (i-0.5*avg_length1):(i+0.5*avg_length1);
+        avg_Zgiro(i,2) = avg_Zgiro(i,2) + (1/avg_length1)*Theta(j,1);
+    end;
+end;
+peak_length = 150;
+for i = (0.5*peak_length+1):(l-0.5*peak_length);
+    avg_Zgiro(i,3)= -(avg_Zgiro((i-0.5*peak_length),2))+(avg_Zgiro((i+0.5*peak_length),2));
+end;
+
+for i = 1:l;
+    if avg_Zgiro(i,3) > 0.6 || avg_Zgiro(i,3) < -0.6 ; %
+        avg_Zgiro(i,4) = avg_Zgiro(i,3);
+    else;
+        avg_Zgiro(i,4) = 0;
+    end;
+    
+end;
+
+peak_centre_avg_width = 30;
+x=0;
+for i = (0.5*peak_centre_avg_width+1):(l-0.5*peak_centre_avg_width);
+    if abs(avg_Zgiro(i,4)) > 0;
+    for j = (i-0.5*peak_centre_avg_width):(i+0.5*peak_centre_avg_width);
+        avg_Zgiro(i,5) = avg_Zgiro(i,5)+ (1/(peak_centre_avg_width+1))*avg_Zgiro(j,4);
+    end;
+    end;
+end;
+
+for i = 1:l;
+    if avg_Zgiro(i,5)>0 && avg_Zgiro(i,5)<avg_Zgiro(i-1,5) && avg_Zgiro(i-1,5)>avg_Zgiro(i-2,5);
+        avg_Zgiro(i,6) = avg_Zgiro(i,4);
+    else if avg_Zgiro(i,5)<0 && avg_Zgiro(i,5)>avg_Zgiro(i-1,5) && avg_Zgiro(i-1,5)<avg_Zgiro(i-2,5);
+            avg_Zgiro(i,6) = avg_Zgiro(i,4);
+        else;
+            avg_Zgiro(i,6) = 0;
+        end;
+    end;
+end;
+a = 1;
+while a<=l;
+while abs(avg_Zgiro(a,6))>0;
+    c=a;
+        while a<=l && abs(avg_Zgiro(a,5))>0
+            if abs(avg_Zgiro(a,6))>0;
+            avg_Zgiro(a,7) = avg_Zgiro(a,6);
+            else;
+            avg_Zgiro(a,7) = 0;
+            end;
+            a=a+1;
+        end;
+        d  = max(abs(avg_Zgiro(:,7)));
+        for b = c:a;
+            if abs(avg_Zgiro(b,7))==d;
+                avg_Zgiro(b,8)=avg_Zgiro(b,7);
+            else;
+                avg_Zgiro(b,8)=0;
+            end;
+            end;
+            avg_Zgiro(:,7)=0;
+end;
+a=a+1;
+end;
+
+% f = 1
+% while f < l;
+%     while abs(avg_Zgiro(f,6))>0;
+%         if abs(avg_Zgiro(f,6))>abs(avg_Zgiro((f-1),6));
+%             avg_Zgiro(f,6) = avg_Zgiro(f,6);
+%         else;
+%             avg_Zgiro(f,6) = 0;
+%         end;
+%         f = f+1;
+%     end;
+%     f=f+1;
+% end; 
+
+for i = 1:l;
+    h = avg_Zgiro(i,8);
+    if h>0.6 && h<1;
+        avg_Zgiro(i,9) = 0.7854;
+    else if h<-0.6 && h>-1;
+            avg_Zgiro(i,9) = -0.7854;
+    else if h>=1 && h<2.5;
+        avg_Zgiro(i,9) = 1.5708;
+    else if h<=-1 && h>-2.5 ;
+        avg_Zgiro(i,9) = -1.5708;
+    else if h>=2.5 && h<4;
+        avg_Zgiro(i,9) = 3.1416;
+    else if h<=-2.5 && h>-4;
+        avg_Zgiro(i,9) = -3.1416;
+    else if h>=4 && h<5.5;
+        avg_Zgiro(i,9) = 4.7124;
+    else if h<=-4 && h>-5.5;
+        avg_Zgiro(i,9) = -4.7124;
+    else if h>=5.5 && h<7;
+        avg_Zgiro(i,9) = 6.2832;
+    else if h<=-5.5 &&h>-7;
+        avg_Zgiro(i,9) = -6.2832;
+        else;
+            avg_Zgiro(i,9)=0;
+        end;
+        end;
+        end;
+        end;
+        end;
+        end;
+        end;
+        end;
+        end;
+    end;
+end;
+for i = 2:l;
+    avg_Zgiro(i,10)= avg_Zgiro(i-1,10)+avg_Zgiro(i,9);
+end;
+
+
+e=1;
+for i = 1:l;
+    if abs(avg_Zgiro(i,9))>0;
+        e = e+1;
+    else;
+        e=e;
+    end;
+end;
+
+dir_vec = zeros(e,1);
+f = 1;
+for i = 1:l;
+    if abs(avg_Zgiro(i,9))>0;
+        dir_vec(f,1) = avg_Zgiro(i,9);
+        f=f+1;
+    else;
+        f=f;
+    end;
+end;
+dir_vec
+    
+aMech_DSuite_stairs = [1.5708;1.5708;-0.7854;0.7854;3.1416;-1.5708;1.5708;1.5708;3.1416;3.1416;1.5708;1.5708;-1.5708;0;0;0;0;0;0;0];
+bDSuite_Mech_stairs = [1.5708;-1.5708;-1.5708;-3.1416;-3.1416;-1.5708;-1.5708;1.5708;-3.1416;-0.7854;0.7854;-1.5708;-1.5708;0;0;0;0;0;0;0];
+cMech_DSuite_nostairs = [-1.5708;-0.7854;0.7854;-1.5708;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0];
+dDSuite_Mech_nostairs = [1.5708;0.7854;-0.7854;1.5708;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0];
+
+ma = zeros(length(aMech_DSuite_stairs),1);
+na = zeros((length(aMech_DSuite_stairs)-length(dir_vec)+1),1);
+for i = 1:(length(aMech_DSuite_stairs)-length(dir_vec)+1);
+    for j = 1:length(dir_vec);
+        if dir_vec(j) == aMech_DSuite_stairs(j+i-1);
+            ma(j) = 1;
+        else;
+            ma(j) = 0;
+        end;
+        na(i) = mean(ma);
+    end;
+end;    
+na        ;
+    
+mb = zeros(length(bDSuite_Mech_stairs),1);
+nb = zeros((length(bDSuite_Mech_stairs)-length(dir_vec)+1),1);
+for i = 1:(length(bDSuite_Mech_stairs)-length(dir_vec)+1);
+    for j = 1:length(dir_vec);
+        if dir_vec(j) == bDSuite_Mech_stairs(j+i-1);
+            mb(j) = 1;
+        else;
+            mb(j) = 0;
+        end;
+        nb(i) = mean(mb);
+    end;
+end;    
+nb            ;
+
+mc = zeros(length(cMech_DSuite_nostairs),1);
+nc = zeros((length(cMech_DSuite_nostairs)-length(dir_vec)+1),1);
+for i = 1:(length(cMech_DSuite_nostairs)-length(dir_vec)+1);
+    for j = 1:length(dir_vec);
+        if dir_vec(j) == cMech_DSuite_nostairs(j+i-1);
+            mc(j) = 1;
+        else;
+            mc(j) = 0;
+        end;
+        nc(i) = mean(mc);
+    end;
+end;    
+nc      ;
+
+md = zeros(length(dDSuite_Mech_nostairs),1);
+nd = zeros((length(dDSuite_Mech_nostairs)-length(dir_vec)+1),1);
+for i = 1:(length(dDSuite_Mech_nostairs)-length(dir_vec)+1);
+    for j = 1:length(dir_vec);
+        if dir_vec(j) == dDSuite_Mech_nostairs(j+i-1);
+            md(j) = 1;
+        else
+            md(j) = 0;
+        end;
+        nd(i) = mean(md);
+    end;
+end;    
+nd   ;
+
+Route_factor = [max(na);max(nb);max(nc);max(nd)]
+
+figure
+plot(avg_Zgiro(:,1),avg_Zgiro(:,2),'r-', T,Theta(:,1),'g-',avg_Zgiro(:,1),avg_Zgiro(:,3),'b-',avg_Zgiro(:,1),avg_Zgiro(:,4),'cy-',avg_Zgiro(:,1),avg_Zgiro(:,8),'k-',avg_Zgiro(:,1),avg_Zgiro(:,6),'m-')
+figure
+plot(T,Theta(:,1),'r-',avg_Zgiro(:,1),avg_Zgiro(:,10),'k-')%,avg_Zgiro(:,1),avg_Zgiro(:,8),'m-',avg_Zgiro(:,1),avg_Zgiro(:,9),'cy-',
+
+
+
+%% Velocity of subject
+
+% for n = 1: length(filterz)
+%    sample = filterz(n):filterz(n+10)
+%    
+% end
+    
+    
+
+%% X-Y co-ordinate plotting
+
+    Fs = 50;
+    T = 1/Fs;
+   
+
+    pks_jerk = findpeaks(jerkx);
+    indices = find(abs(pks_jerk)>5);
+    A = pks_jerk(indices); %= []
+    num_of_steps_jerk = length(A)
+    figure
+    plot(A)
+    title('Absolute Jerk peaks')
+    xlabel('Frame (delta t = 0.02s)');
+    ylabel('m^3 /s')
+    
+    
+%      semi_gaussian = [15 25 35 75];
+%      semi_gaussian = [semi_gaussian fliplr(semi_gaussian)];
+%      weighted = tsmovavg(A, 'w', semi_gaussian,1);
+%      figure
+%      plot(weighted)
+     
+     x_distance = 0;
+     y_distance = 0;
+     z_distance = 0;
+%      time_step_characterised = (T * length(jerkx)) / length (weighted);
+%      axis_spacing = linspace(0,T * length(jerkx), length(weighted));
+     theta = avg_Zgiro(:,10);
+     Velocity = 0.71; %avereage velocity whilst walking in a straight line
+     Velocity_stairs = 0.15; % average x velocity whilst travelling up stairs
+
+   for n = 1 : length(jerkx)
+       
+    if  jerkx(n) > 20 && jerkx(n) < 30
+        
+        B(n) = 25;
+        x_velocity = Velocity * cos(theta(n)) ; %veloctiy of person in x m/s
+        y_velocity = Velocity * sin (theta(n));
+        z_distance_snapshot = 0;
+        
+    elseif jerkx(n) > 30 && jerkx(n)<40
+        
+        B(n) = 35;
+        x_velocity = Velocity_stairs * cos(theta(n));
+        y_velocity = Velocity_stairs * sin (theta(n));
+        if filterz(n) > 2.3
+            z_distance_snapshot = 0.2;            
+        else 
+            z_distance_snapshot = 0;            
+        end
+        
+    elseif jerkx(n)> 50
+        
+       B(n) = 75;
+       x_velocity = Velocity_stairs * cos(theta(n));
+       y_velocity = Velocity_stairs * sin (theta(n));
+       z_distance_snapshot = -0.08;
+       
+    elseif jerkx(n) < -20 && jerkx(n) > -30
+        B(n) = 25;
+        x_velocity = Velocity * cos(theta(n)) ; %veloctiy of person in x m/s
+        y_velocity = Velocity * sin (theta(n));
+        z_distance_snapshot = 0;
+        
+    elseif jerkx(n) < -30 && jerkx(n) >-40
+        B(n) = 35;
+        x_velocity = Velocity_stairs * cos(theta(n));
+        y_velocity = Velocity_stairs * sin (theta(n));
+        z_distance_snapshot = 0;
+        
+    elseif jerkx(n) < -50
+       B(n) = 75;
+       x_velocity = Velocity_stairs * cos(theta(n));
+       y_velocity = Velocity_stairs * sin (theta(n));
+       z_distance_snapshot = -0.08;
+    else 
+        B(n) = 25;
+        x_velocity = Velocity * cos(theta(n)) ; %veloctiy of person in x m/s
+        y_velocity = Velocity * sin (theta(n));
+        z_distance_snapshot = 0;
+        
+    end
+    
+    x_distance(n+1) = x_distance(n) + x_velocity * T;
+    y_distance(n+1) = y_distance(n) + y_velocity * T;
+    z_distance(n+1) = z_distance(n) + z_distance_snapshot;
+   end
+   
+   figure
+   plot(B)
+   title('Characterising of jerk data')
+   xlabel('Frame (delta t = 0.02s)');
+   ylabel('m^3 /s')
+   hold on 
+   plot (abs(jerkx))
+   hold off 
+
+%    figure
+%     hold on     
+%     for n = 1: length(x_distance)
+%        
+%         x_displacement_movie(n) = x_distance(n); 
+%         y_displacement_movie(n) = y_distance(n);
+%         plot(x_displacement_movie, y_displacement_movie);
+% %         drawnow
+%         F(n) = getframe;
+%         
+%     end  
+%     movie(F,1)
+%     hold off
+
+   figure
+   plot((x_distance .*-1), y_distance)
+   
+   figure ('units','normalized','outerposition',[0 0 1 1])
+   plot3((x_distance .*-1), y_distance, z_distance)
+   xlabel('x distance / m')
+   ylabel('y distance / m')
+   zlabel('z distance / m')
+%    
+%     figure ('name',strcat(name,' - 3D Path Plot'),'units','normalized','outerposition',[0 0 1 1])
+%     v = VideoWriter('C:\Users\Bradley\Documents\UNIVERSITY\Part D\Total Product Design\peaks2.mp4','MPEG-4');
+%     v.FrameRate = 60;
+%     open(v);
+%     for n = 1: length(x_distance)
+%        
+%         x_displacement_movie(n) = x_distance(n)*-1; 
+%         y_displacement_movie(n) = y_distance(n);
+%         z_displacement_movie(n) = z_distance(n);
+%         x = plot3(x_displacement_movie, y_displacement_movie,z_displacement_movie);
+%         axis([-10 10 0 60 -5 25])
+%         xlabel('x distance / m')
+%         ylabel('y distance / m')
+%         zlabel('z distance / m')
+%         %drawnow
+%         img = getframe(gcf);
+%         writeVideo(v,img);
+%         
+%     end 
+%     
+%     close(v)
+    
+    
+   
+   
+%    figure
+%    plot(axis_spacing, y_distance(2:length(x_distance)))
+
+##### SOURCE END #####
+--></body></html>

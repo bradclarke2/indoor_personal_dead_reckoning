@@ -1,0 +1,699 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>trying_filter_data_analysis</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-03-01"><meta name="DC.source" content="trying_filter_data_analysis.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Clearing of previous data</a></li><li><a href="#2">Selection of .csv file and the useful data</a></li><li><a href="#3">Calibration of data</a></li><li><a href="#4">Sizing of Graphs</a></li><li><a href="#5">Calibrated accel and gyro graphs</a></li><li><a href="#6">Calculation producing the normalised accelerations</a></li><li><a href="#7">Frequency and time step calculations</a></li><li><a href="#8">Fast fourier transform</a></li><li><a href="#9">Filter</a></li><li><a href="#10">Checking of fliter effect</a></li><li><a href="#11">Calculating Jerk</a></li><li><a href="#12">Jerk Plots</a></li><li><a href="#13">Gyroscope Plots</a></li><li><a href="#14">Calculating anglular displacement</a></li><li><a href="#15">Plotting of angular displacement</a></li><li><a href="#16">velocity calculation</a></li></ul></div><h2>Clearing of previous data<a name="1"></a></h2><pre class="codeinput">clear <span class="string">all</span>
+clc
+</pre><h2>Selection of .csv file and the useful data<a name="2"></a></h2><pre class="codeinput"><span class="comment">%files = dir('*.csv');</span>
+<span class="comment">%for file = files'</span>
+    [FileName,PathName] = uigetfile({<span class="string">'*'</span>},<span class="string">'Load Turn File'</span>);
+    <span class="comment">%get filename and use this to append to graphs and figures</span>
+    <span class="comment">%FileName = pwd;</span>
+    <span class="comment">%FileName = strcat(FileName,'\',file.name);</span>
+    [pathstr, name, ext] = fileparts(FileName); <span class="comment">% inputdlg('What is the name of this test?','Test Name Input');</span>
+    delimiter = <span class="string">','</span>;
+    FileName = fullfile(PathName,[name ext]);
+    <span class="comment">%Format string for each line of text:</span>
+    formatSpec = <span class="string">'%f%f%f%f%f%f%f%*s%*s%[^\n\r]'</span>;
+    <span class="comment">% Open the text file.</span>
+    fileID = fopen(FileName,<span class="string">'r'</span>);
+    <span class="comment">% Read columns of data according to format string.</span>
+    dataArray = textscan(fileID, formatSpec, <span class="string">'Delimiter'</span>, delimiter, <span class="string">'EmptyValue'</span> ,NaN, <span class="string">'ReturnOnError'</span>, false);
+    <span class="comment">% Close the text file.</span>
+    fclose(fileID);
+    <span class="comment">%remove unnecesary columns from raw CSV file</span>
+    raw_data = [dataArray{:, 2} dataArray{:, 3} dataArray{:, 4} dataArray{:, 5} dataArray{:, 6} dataArray{:, 7}];
+    <span class="comment">%Calibrate data using 04011 node calibration file</span>
+    calibrated_data = Calibrate04008(raw_data);
+</pre><h2>Calibration of data<a name="3"></a></h2><pre class="codeinput">    <span class="comment">%seperate accel and gyro</span>
+    raw_accel = [raw_data(:, 1) raw_data(:, 2) raw_data(:, 3)];
+    raw_gyro = [raw_data(:, 4) raw_data(:, 5) raw_data(:, 6)];
+    cal_accel = [calibrated_data(:, 1) calibrated_data(:, 2) calibrated_data(:, 3)];
+    cal_gyro = [calibrated_data(:, 4) calibrated_data(:, 5) calibrated_data(:, 6)];
+</pre><h2>Sizing of Graphs<a name="4"></a></h2><pre class="codeinput">    max_y_axis = 25;
+    max_x_axis = size(cal_accel,1);
+    max_gyro_axis = 3;
+</pre><h2>Calibrated accel and gyro graphs<a name="5"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated 3 axis acceleration'</span>));
+    plot(cal_accel);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'g'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-1.5,1.5]);
+    title (strcat(name,<span class="string">' - Calibrated 3 axis acceleration'</span>));
+    legend(<span class="string">'X Axis'</span>, <span class="string">'Y Axis'</span>, <span class="string">'Z Axis'</span>);
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated 3 axis gyro'</span>));
+    plot(cal_gyro);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated 3 axis gyro'</span>));
+    legend(<span class="string">'X Axis'</span>, <span class="string">'Y Axis'</span>, <span class="string">'Z Axis'</span>);
+</pre><img vspace="5" hspace="5" src="trying_filter_data_analysis_01.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_02.png" alt=""> <h2>Calculation producing the normalised accelerations<a name="6"></a></h2><pre class="codeinput">    normx = (cal_accel(:,1)+1)*9.81+0.15; <span class="comment">%0.15 is extra calibration</span>
+    normy = cal_accel(:,2)*9.81;
+    normz = (cal_accel(:,3))*9.81;
+    gyrox = cal_gyro(:,1);
+    gyroy = cal_gyro(:,2);
+    gyroz = cal_gyro(:,3);
+</pre><h2>Frequency and time step calculations<a name="7"></a></h2><pre class="codeinput">    Fs = 50;
+    T = 1/Fs;
+</pre><h2>Fast fourier transform<a name="8"></a></h2><pre class="codeinput">    L = max_x_axis;
+    NFFT = 2^nextpow2(L); <span class="comment">% Next power of 2 from length of y</span>
+    Y = fft(normx,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+
+    figure;
+    <span class="comment">% Plot single-sided amplitude spectrum.</span>
+    plot(f,2*abs(Y(1:NFFT/2+1)))
+    title(<span class="string">'Single-Sided Amplitude Spectrum of y(t)'</span>)
+    xlabel(<span class="string">'Frequency (Hz)'</span>)
+    ylabel(<span class="string">'|Y(f)|'</span>)
+</pre><img vspace="5" hspace="5" src="trying_filter_data_analysis_03.png" alt=""> <h2>Filter<a name="9"></a></h2><pre>   for n = 1:length(normx)
+       sample_num (n) = n;
+   end
+   sample_num = sample_num';</pre><pre>   fc = 5;
+   wn = (fc/Fs)*2*pi;
+   [sample_num,normx] = butter(20,wn);
+   filterx= normx;</pre><pre class="codeinput">    filterx = butterworthLowV1(normx, 1,50, 5);
+    filtery = butterworthLowV1(normy, 1,50, 5);
+    filterz = butterworthLowV1(normz, 1,50, 5);
+</pre><h2>Checking of fliter effect<a name="10"></a></h2><pre class="codeinput">    L = max_x_axis;
+    NFFT = 2^nextpow2(L); <span class="comment">% Next power of 2 from length of y</span>
+    Y = fft(filterx,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+
+    figure;
+    <span class="comment">% Plot single-sided amplitude spectrum.</span>
+    plot(f,2*abs(Y(1:NFFT/2+1)))
+    title(<span class="string">'Single-Sided Amplitude Spectrum of y(t)'</span>)
+    xlabel(<span class="string">'Frequency (Hz)'</span>)
+    ylabel(<span class="string">'|Y(f)|'</span>)
+
+    <span class="comment">%%Plotting of flitered data</span>
+
+        <span class="comment">%displacement = acc2disp(norm,0.02);</span>
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated and Filtered  X axis acceleration'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(filterx);
+    hold <span class="string">on</span>
+    plot(normx)
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s2'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,<span class="string">' - Filtered, Calibrated &amp; Normalised X axis acceleration'</span>));
+
+<span class="comment">%     figure('name',strcat(name,' - Calibrated &amp; Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);</span>
+<span class="comment">%     plot(normx);</span>
+<span class="comment">%     xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%     ylabel('m/s2'); % y-axis label</span>
+<span class="comment">%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);</span>
+<span class="comment">%     title (strcat(name,' - Calibrated &amp; Normalised X axis acceleration'));</span>
+<span class="comment">%</span>
+<span class="comment">%     norm_accel = [normx normy normz];</span>
+<span class="comment">%</span>
+<span class="comment">%     figure('name',strcat(name,' - Calibrated &amp; Normalised(X) 3 axis acceleration'));</span>
+<span class="comment">%     plot(norm_accel);</span>
+<span class="comment">%     xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%     ylabel('m/s2'); % y-axis label</span>
+<span class="comment">%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);</span>
+<span class="comment">%     title (strcat(name,' - Calibrated &amp; Normalised(X) 3 axis acceleration'));</span>
+<span class="comment">%     legend('X Axis', 'Y Axis', 'Z Axis');</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%     %%displacement = acc2disp(norm,0.02);</span>
+<span class="comment">%     figure('name',strcat(name,' - Calibrated &amp; Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);</span>
+<span class="comment">%     plot(normx);</span>
+<span class="comment">%     xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%     ylabel('m/s2'); % y-axis label</span>
+<span class="comment">%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);</span>
+<span class="comment">%     title (strcat(name,' - Calibrated &amp; Normalised X axis acceleration'));</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated and Filtered Y axis acceleration'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(filtery);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s2'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Y axis acceleration'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated and Filtered Z axis acceleration'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(filterz);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s2'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Z axis acceleration'</span>));
+</pre><img vspace="5" hspace="5" src="trying_filter_data_analysis_04.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_05.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_06.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_07.png" alt=""> <h2>Calculating Jerk<a name="11"></a></h2><pre class="codeinput">    <span class="keyword">for</span> n = 1 : (length(normx)-1)
+       jerkx(n) = (filterx(n+1)-filterx(n))/T;
+       <span class="keyword">if</span> jerkx(n)&gt;17
+           step(n)= 1;
+       <span class="keyword">else</span>
+           step(n) = 0;
+       <span class="keyword">end</span>
+       jerky(n) = (filtery(n+1)-filtery(n))/T;
+       jerkz(n) = (filterz(n+1)-filterz(n))/T;
+    <span class="keyword">end</span>
+
+    jerkx = jerkx';
+    jerky = jerky';
+    jerkz = jerkz';
+
+    steps = sum(step);
+</pre><h2>Jerk Plots<a name="12"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrate X axis Jerk'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(jerkx);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s3'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated X axis Jerk'</span>));
+
+      figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrate Y axis Jerk'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(jerky);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s3'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Y axis Jerk'</span>));
+
+      figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrate Z axis Jerk'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(jerkz);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'m/s3'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Z axis Jerk'</span>));
+</pre><img vspace="5" hspace="5" src="trying_filter_data_analysis_08.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_09.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_10.png" alt=""> <h2>Gyroscope Plots<a name="13"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated X axis gyro'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(gyrox);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated X axis gyro'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Y axis gyro'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(gyroy);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Y axis gyro'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Z axis gyro'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(gyroz);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Rad/s'</span>); <span class="comment">% y-axis label</span>
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,<span class="string">' - Calibrated Z axis gyro'</span>));
+</pre><img vspace="5" hspace="5" src="trying_filter_data_analysis_11.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_12.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_13.png" alt=""> <h2>Calculating anglular displacement<a name="14"></a></h2><pre class="codeinput">    anglex = 0;
+    angley = 0;
+    anglez = 0;
+
+    <span class="keyword">for</span> n = 1: (length(gyrox)-1)
+       x_angle =((gyrox(n)+ gyrox(n+1))/2)*T;
+       anglex(n+1) = anglex(n) + x_angle;
+
+       y_angle =((gyroy(n)+ gyroy(n+1))/2)*T;
+       angley(n+1) = angley(n) + y_angle;
+
+       z_angle =((gyroz(n)+ gyroz(n+1))/2)*T;
+       anglez(n+1) = anglez(n) + z_angle;
+    <span class="keyword">end</span>
+
+    anglex = (anglex') * 180/pi;
+    angley = (angley') * 180/pi;
+    anglez = (anglez') * 180/pi;
+
+    y1 = ones(length(anglex),1);
+    y90 = y1*90;
+    y180 = y1*180;
+    y270 = y1*270;
+</pre><h2>Plotting of angular displacement<a name="15"></a></h2><pre class="codeinput">    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated X axis angular dsiplacement'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(anglex);
+    hold <span class="string">on</span>
+    plot(y180);
+    plot(y90);
+    plot(y270);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Degrees'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated X axis angular displacement'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Y axis angular displacement'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(angley);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Degrees'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Y axis angular displacement'</span>));
+
+    figure(<span class="string">'name'</span>,strcat(name,<span class="string">' - Calibrated Z axis angular displacement'</span>),<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(anglez);
+    xlabel(<span class="string">'Frame (delta t = 0.02s)'</span>); <span class="comment">% x-axis label</span>
+    ylabel(<span class="string">'Degrees'</span>); <span class="comment">% y-axis label</span>
+    title (strcat(name,<span class="string">' - Calibrated Z axis angular displacement'</span>));
+</pre><img vspace="5" hspace="5" src="trying_filter_data_analysis_14.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_15.png" alt=""> <img vspace="5" hspace="5" src="trying_filter_data_analysis_16.png" alt=""> <h2>velocity calculation<a name="16"></a></h2><pre class="codeinput"><span class="comment">%     x_velo = 0;</span>
+<span class="comment">%     y_velo = 0;</span>
+<span class="comment">%     z_velo = 0;</span>
+<span class="comment">%</span>
+<span class="comment">%     for n = 2:(length(filterx)-1)</span>
+<span class="comment">%</span>
+<span class="comment">%         x_velo(n) = x_velo(n-1) + T*0.5*(filterx(n+1)+filterx(n));</span>
+<span class="comment">%         y_velo(n) = y_velo(n-1) + T*0.5*(filtery(n+1)+filtery(n));</span>
+<span class="comment">%         z_velo(n) = z_velo(n-1) + T*0.5*(filterz(n+1)+filterz(n));</span>
+<span class="comment">%</span>
+<span class="comment">%     end</span>
+<span class="comment">%</span>
+<span class="comment">%     %% Velocity plots</span>
+<span class="comment">%</span>
+<span class="comment">%    figure</span>
+<span class="comment">%    plot (x_velo)</span>
+<span class="comment">%</span>
+<span class="comment">%    %% Displacement Calculations</span>
+<span class="comment">%</span>
+<span class="comment">%    x_displacement = 0;</span>
+<span class="comment">%    y_displacement = 0;</span>
+<span class="comment">%    z_displacement = 0;</span>
+<span class="comment">%</span>
+<span class="comment">%    for n = 2: (length(x_velo) - 1)</span>
+<span class="comment">%</span>
+<span class="comment">%    x_displacement(n) = x_displacement(n-1) + T*0.5*(x_velo(n)+x_velo(n+1));</span>
+<span class="comment">%    y_displacement(n) = y_displacement(n-1) + T*0.5*(y_velo(n)+y_velo(n+1));</span>
+<span class="comment">%    z_displacement(n) = z_displacement(n-1) + T*0.5*(z_velo(n)+z_velo(n+1));</span>
+<span class="comment">%</span>
+<span class="comment">%    end</span>
+<span class="comment">%</span>
+<span class="comment">%    y2 = ones(length(x_displacement),1);</span>
+<span class="comment">%    y8_5 = y2*-8.5;</span>
+<span class="comment">%</span>
+<span class="comment">%    figure('name',strcat(name,' - Calibrated X axis linear dsiplacement'),'units','normalized','outerposition',[0 0 1 1]);</span>
+<span class="comment">%    plot(x_displacement)</span>
+<span class="comment">%    hold on</span>
+<span class="comment">%    plot(y8_5)</span>
+<span class="comment">%    plot(560*ones(size(x_displacement)), x_displacement, 'LineWidth', 1)</span>
+<span class="comment">%    xlabel('Frame (delta t = 0.02s)'); % x-axis label</span>
+<span class="comment">%    ylabel('Displacement - m'); % y-axis label</span>
+<span class="comment">%    title (strcat(name,' - Calibrated X axis linear dsiplacement'));</span>
+<span class="comment">%</span>
+<span class="comment">% %</span>
+<span class="comment">% %     h = get(0,'children');</span>
+<span class="comment">% %     for i=1:length(h)</span>
+<span class="comment">% %       saveas(h(i), get(h(i),'Name'), 'png');</span>
+<span class="comment">% %     end</span>
+<span class="comment">%</span>
+<span class="comment">% %     close all</span>
+<span class="comment">% %end</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Clearing of previous data
+
+clear all
+clc
+
+%% Selection of .csv file and the useful data
+ 
+%files = dir('*.csv');
+%for file = files'
+    [FileName,PathName] = uigetfile({'*'},'Load Turn File');
+    %get filename and use this to append to graphs and figures
+    %FileName = pwd;
+    %FileName = strcat(FileName,'\',file.name);
+    [pathstr, name, ext] = fileparts(FileName); % inputdlg('What is the name of this test?','Test Name Input');
+    delimiter = ',';
+    FileName = fullfile(PathName,[name ext]);
+    %Format string for each line of text:
+    formatSpec = '%f%f%f%f%f%f%f%*s%*s%[^\n\r]';
+    % Open the text file.
+    fileID = fopen(FileName,'r');
+    % Read columns of data according to format string.
+    dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'EmptyValue' ,NaN, 'ReturnOnError', false);
+    % Close the text file.
+    fclose(fileID);
+    %remove unnecesary columns from raw CSV file
+    raw_data = [dataArray{:, 2} dataArray{:, 3} dataArray{:, 4} dataArray{:, 5} dataArray{:, 6} dataArray{:, 7}];
+    %Calibrate data using 04011 node calibration file
+    calibrated_data = Calibrate04008(raw_data);
+    
+%% Calibration of data
+
+    %seperate accel and gyro
+    raw_accel = [raw_data(:, 1) raw_data(:, 2) raw_data(:, 3)];
+    raw_gyro = [raw_data(:, 4) raw_data(:, 5) raw_data(:, 6)];
+    cal_accel = [calibrated_data(:, 1) calibrated_data(:, 2) calibrated_data(:, 3)];
+    cal_gyro = [calibrated_data(:, 4) calibrated_data(:, 5) calibrated_data(:, 6)];
+
+%% Sizing of Graphs       
+    max_y_axis = 25;
+    max_x_axis = size(cal_accel,1);
+    max_gyro_axis = 3;
+    
+
+%%  Calibrated accel and gyro graphs
+
+    figure('name',strcat(name,' - Calibrated 3 axis acceleration'));
+    plot(cal_accel);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('g'); % y-axis label
+    axis([0 ,max_x_axis,-1.5,1.5]);
+    title (strcat(name,' - Calibrated 3 axis acceleration'));
+    legend('X Axis', 'Y Axis', 'Z Axis');
+
+    figure('name',strcat(name,' - Calibrated 3 axis gyro'));
+    plot(cal_gyro);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated 3 axis gyro'));
+    legend('X Axis', 'Y Axis', 'Z Axis');
+
+    %% Calculation producing the normalised accelerations
+
+    normx = (cal_accel(:,1)+1)*9.81+0.15; %0.15 is extra calibration
+    normy = cal_accel(:,2)*9.81;
+    normz = (cal_accel(:,3))*9.81;
+    gyrox = cal_gyro(:,1);
+    gyroy = cal_gyro(:,2);
+    gyroz = cal_gyro(:,3);
+    
+    %% Frequency and time step calculations
+
+    Fs = 50;
+    T = 1/Fs;
+    
+    %% Fast fourier transform
+    L = max_x_axis;
+    NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+    Y = fft(normx,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+      
+    figure;
+    % Plot single-sided amplitude spectrum.
+    plot(f,2*abs(Y(1:NFFT/2+1))) 
+    title('Single-Sided Amplitude Spectrum of y(t)')
+    xlabel('Frequency (Hz)')
+    ylabel('|Y(f)|')
+    
+    %% Filter
+%     for n = 1:length(normx)
+%         sample_num (n) = n;
+%     end
+%     sample_num = sample_num';
+%     
+%     fc = 5;
+%     wn = (fc/Fs)*2*pi;
+%     [sample_num,normx] = butter(20,wn);
+%     filterx= normx;
+    filterx = butterworthLowV1(normx, 1,50, 5);
+    filtery = butterworthLowV1(normy, 1,50, 5);
+    filterz = butterworthLowV1(normz, 1,50, 5);
+       
+    %% Checking of fliter effect
+    
+    L = max_x_axis;
+    NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+    Y = fft(filterx,NFFT)/L;
+    f = Fs/2*linspace(0,1,NFFT/2+1);
+    
+    figure;
+    % Plot single-sided amplitude spectrum.
+    plot(f,2*abs(Y(1:NFFT/2+1))) 
+    title('Single-Sided Amplitude Spectrum of y(t)')
+    xlabel('Frequency (Hz)')
+    ylabel('|Y(f)|')
+    
+    %%Plotting of flitered data
+    
+        %displacement = acc2disp(norm,0.02);
+    figure('name',strcat(name,' - Calibrated and Filtered  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(filterx);
+    hold on 
+    plot(normx)
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s2'); % y-axis label
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,' - Filtered, Calibrated & Normalised X axis acceleration'));
+    
+%     figure('name',strcat(name,' - Calibrated & Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+%     plot(normx);
+%     xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%     ylabel('m/s2'); % y-axis label
+%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+%     title (strcat(name,' - Calibrated & Normalised X axis acceleration'));
+% 
+%     norm_accel = [normx normy normz];
+% 
+%     figure('name',strcat(name,' - Calibrated & Normalised(X) 3 axis acceleration'));
+%     plot(norm_accel);
+%     xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%     ylabel('m/s2'); % y-axis label
+%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+%     title (strcat(name,' - Calibrated & Normalised(X) 3 axis acceleration'));
+%     legend('X Axis', 'Y Axis', 'Z Axis');
+% 
+%     
+%     %%displacement = acc2disp(norm,0.02);
+%     figure('name',strcat(name,' - Calibrated & Normalised  X axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+%     plot(normx);
+%     xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%     ylabel('m/s2'); % y-axis label
+%     axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+%     title (strcat(name,' - Calibrated & Normalised X axis acceleration'));
+% 
+% 
+    figure('name',strcat(name,' - Calibrated and Filtered Y axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(filtery);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s2'); % y-axis label
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,' - Calibrated Y axis acceleration'));
+
+    figure('name',strcat(name,' - Calibrated and Filtered Z axis acceleration'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(filterz);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s2'); % y-axis label
+    axis([0 ,max_x_axis,-max_y_axis,max_y_axis]);
+    title (strcat(name,' - Calibrated Z axis acceleration'));
+    
+    %% Calculating Jerk
+    
+    for n = 1 : (length(normx)-1)
+       jerkx(n) = (filterx(n+1)-filterx(n))/T;
+       if jerkx(n)>17
+           step(n)= 1;
+       else 
+           step(n) = 0;
+       end           
+       jerky(n) = (filtery(n+1)-filtery(n))/T;
+       jerkz(n) = (filterz(n+1)-filterz(n))/T;
+    end
+    
+    jerkx = jerkx';
+    jerky = jerky';
+    jerkz = jerkz';
+    
+    steps = sum(step);
+    
+    %% Jerk Plots
+    
+    figure('name',strcat(name,' - Calibrate X axis Jerk'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(jerkx);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s3'); % y-axis label    
+    title (strcat(name,' - Calibrated X axis Jerk')); 
+    
+      figure('name',strcat(name,' - Calibrate Y axis Jerk'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(jerky);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s3'); % y-axis label    
+    title (strcat(name,' - Calibrated Y axis Jerk')); 
+    
+      figure('name',strcat(name,' - Calibrate Z axis Jerk'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(jerkz);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('m/s3'); % y-axis label    
+    title (strcat(name,' - Calibrated Z axis Jerk')); 
+    
+    
+%% Gyroscope Plots
+
+    figure('name',strcat(name,' - Calibrated X axis gyro'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(gyrox);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated X axis gyro'));
+
+    figure('name',strcat(name,' - Calibrated Y axis gyro'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(gyroy);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated Y axis gyro'));
+
+    figure('name',strcat(name,' - Calibrated Z axis gyro'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(gyroz);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Rad/s'); % y-axis label
+    axis([0 ,max_x_axis,-max_gyro_axis,max_gyro_axis]);
+    title (strcat(name,' - Calibrated Z axis gyro'));
+    
+    %% Calculating anglular displacement
+    anglex = 0;
+    angley = 0;
+    anglez = 0;
+    
+    for n = 1: (length(gyrox)-1)
+       x_angle =((gyrox(n)+ gyrox(n+1))/2)*T;
+       anglex(n+1) = anglex(n) + x_angle; 
+       
+       y_angle =((gyroy(n)+ gyroy(n+1))/2)*T;
+       angley(n+1) = angley(n) + y_angle; 
+       
+       z_angle =((gyroz(n)+ gyroz(n+1))/2)*T;
+       anglez(n+1) = anglez(n) + z_angle; 
+    end
+ 
+    anglex = (anglex') * 180/pi;
+    angley = (angley') * 180/pi;
+    anglez = (anglez') * 180/pi;
+    
+    y1 = ones(length(anglex),1);
+    y90 = y1*90;
+    y180 = y1*180;
+    y270 = y1*270;
+    
+    %% Plotting of angular displacement
+
+    figure('name',strcat(name,' - Calibrated X axis angular dsiplacement'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(anglex);
+    hold on
+    plot(y180);
+    plot(y90);
+    plot(y270);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Degrees'); % y-axis label
+    title (strcat(name,' - Calibrated X axis angular displacement'));
+    
+    figure('name',strcat(name,' - Calibrated Y axis angular displacement'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(angley);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Degrees'); % y-axis label
+    title (strcat(name,' - Calibrated Y axis angular displacement'));
+    
+    figure('name',strcat(name,' - Calibrated Z axis angular displacement'),'units','normalized','outerposition',[0 0 1 1]);
+    plot(anglez);
+    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+    ylabel('Degrees'); % y-axis label
+    title (strcat(name,' - Calibrated Z axis angular displacement'));
+    
+    %% velocity calculation
+    
+%     x_velo = 0;
+%     y_velo = 0;
+%     z_velo = 0;
+%     
+%     for n = 2:(length(filterx)-1)
+%         
+%         x_velo(n) = x_velo(n-1) + T*0.5*(filterx(n+1)+filterx(n)); 
+%         y_velo(n) = y_velo(n-1) + T*0.5*(filtery(n+1)+filtery(n));
+%         z_velo(n) = z_velo(n-1) + T*0.5*(filterz(n+1)+filterz(n));
+%         
+%     end
+%     
+%     %% Velocity plots
+%     
+%    figure
+%    plot (x_velo)
+%    
+%    %% Displacement Calculations
+%    
+%    x_displacement = 0;
+%    y_displacement = 0;
+%    z_displacement = 0;
+%    
+%    for n = 2: (length(x_velo) - 1)
+%    
+%    x_displacement(n) = x_displacement(n-1) + T*0.5*(x_velo(n)+x_velo(n+1));
+%    y_displacement(n) = y_displacement(n-1) + T*0.5*(y_velo(n)+y_velo(n+1));
+%    z_displacement(n) = z_displacement(n-1) + T*0.5*(z_velo(n)+z_velo(n+1));
+%      
+%    end
+%    
+%    y2 = ones(length(x_displacement),1);
+%    y8_5 = y2*-8.5;
+%    
+%    figure('name',strcat(name,' - Calibrated X axis linear dsiplacement'),'units','normalized','outerposition',[0 0 1 1]);
+%    plot(x_displacement)
+%    hold on 
+%    plot(y8_5)
+%    plot(560*ones(size(x_displacement)), x_displacement, 'LineWidth', 1)
+%    xlabel('Frame (delta t = 0.02s)'); % x-axis label
+%    ylabel('Displacement - m'); % y-axis label
+%    title (strcat(name,' - Calibrated X axis linear dsiplacement'));
+%     
+% % 
+% %     h = get(0,'children');
+% %     for i=1:length(h)
+% %       saveas(h(i), get(h(i),'Name'), 'png');
+% %     end
+% 
+% %     close all
+% %end
+% 
+% 
+% 
+
+##### SOURCE END #####
+--></body></html>
